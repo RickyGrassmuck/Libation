@@ -11,8 +11,8 @@ RUN dotnet publish \
     -p:PublishProfile=/Source/LibationCli/Properties/PublishProfiles/LinuxProfile.pubxml
 
 FROM mcr.microsoft.com/dotnet/runtime:9.0
-ARG USER_UID=1001
-ARG USER_GID=1001
+ARG USER_UID=99
+ARG USER_GID=100
 
 # Set the character set that will be used for folder and filenames when liberating
 ENV LANG=C.UTF-8
