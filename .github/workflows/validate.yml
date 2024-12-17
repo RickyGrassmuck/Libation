@@ -5,16 +5,29 @@ name: validate
 
 on:
   push:
-    branches: [master]
+    tags:
+      - "v*"
   pull_request:
     branches: [master]
 
 jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Get tag version
+        id: get_version
+        run: |
+          export TAG="${{ github.ref_name }}"
+          echo "version=${TAG#v}" >> "${GITHUB_OUTPUT}"
+
   docker:
+    needs: [prerelease]
     uses: ./.github/workflows/docker.yml
     with:
-      version: ${GITHUB_SHA}
-      release: false
+      version: ${{ needs.prerelease.outputs.version }}
+      release: true
     secrets:
       docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
       docker_token: ${{ secrets.DOCKERHUB_TOKEN }}
